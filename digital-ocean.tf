@@ -67,23 +67,23 @@ data "local_file" "worker" {
 resource "digitalocean_droplet" "control-plane" {
   // Depends on LB as it generates the configs used as `user_data`
   depends_on = [digitalocean_loadbalancer.public]
-  for_each = toset([
-    "talos-control-plane-1",
-    "talos-control-plane-2",
-    "talos-control-plane-3"
-  ])
-  name      = each.key
-  region    = "sfo3"
-  image     = digitalocean_custom_image.talos.id
-  size      = "s-2vcpu-4gb"
-  vpc_uuid  = digitalocean_vpc.default.id
-  tags      = ["talos-digital-ocean-tutorial-control-plane"]
-  user_data = data.local_file.controlplane.content
-  ssh_keys  = ["c7:28:d5:da:ca:75:0a:06:f7:69:21:4d:56:6e:17:a7"]
+  count      = 3
+  name       = "talos-control-plane-${count.index}"
+  region     = "sfo3"
+  image      = digitalocean_custom_image.talos.id
+  size       = "s-2vcpu-4gb"
+  vpc_uuid   = digitalocean_vpc.default.id
+  tags       = ["talos-digital-ocean-tutorial-control-plane"]
+  user_data  = data.local_file.controlplane.content
+  ssh_keys   = ["c7:28:d5:da:ca:75:0a:06:f7:69:21:4d:56:6e:17:a7"]
+}
 
-  provisioner "local-exec" {
-    command = "./init-cluster.sh ${digitalocean_droplet.control-plane["talos-control-plane-1"].ipv4_address} ${digitalocean_droplet.control-plane["talos-control-plane-1"].name}"
-  }
+resource "null_resource" "init-cluster" {
+    depends_on = [digitalocean_loadbalancer.public]
+
+    provisioner "local-exec" {
+      command = "./init-cluster.sh ${digitalocean_droplet.control-plane[0].ipv4_address}"
+    }
 }
 
 resource "digitalocean_droplet" "worker" {

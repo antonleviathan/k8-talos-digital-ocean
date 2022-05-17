@@ -8,10 +8,7 @@ pwd;
 echo "$dropletIP";
 
 if [ $2 = "talos-control-plane-3" ]; then
-  for arg
-  do
-    talosctl --talosconfig talosconfig config endpoint $1;
-    talosctl --talosconfig talosconfig config node $1;
-    talosctl --talosconfig talosconfig bootstrap;
-  done
+  talosctl --talosconfig talosconfig config endpoint $1;
+  talosctl --talosconfig talosconfig config node $1;
+  talosctl --talosconfig talosconfig bootstrap;
 fi
