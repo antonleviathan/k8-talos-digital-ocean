@@ -56,12 +56,12 @@ resource "digitalocean_loadbalancer" "public" {
 
 data "local_file" "controlplane" {
   depends_on = [digitalocean_loadbalancer.public]
-  filename = "${path.module}/talos-config/controlplane.yaml"
+  filename   = "${path.module}/talos-config/controlplane.yaml"
 }
 
 data "local_file" "worker" {
   depends_on = [digitalocean_loadbalancer.public]
-  filename = "${path.module}/talos-config/worker.yaml"
+  filename   = "${path.module}/talos-config/worker.yaml"
 }
 
 resource "digitalocean_droplet" "control-plane" {
@@ -79,11 +79,11 @@ resource "digitalocean_droplet" "control-plane" {
 }
 
 resource "null_resource" "init-cluster" {
-    depends_on = [digitalocean_loadbalancer.public]
+  depends_on = [digitalocean_loadbalancer.public]
 
-    provisioner "local-exec" {
-      command = "./init-cluster.sh ${digitalocean_droplet.control-plane[0].ipv4_address}"
-    }
+  provisioner "local-exec" {
+    command = "./init-cluster.sh ${digitalocean_droplet.control-plane[0].ipv4_address}"
+  }
 }
 
 resource "digitalocean_droplet" "worker" {
