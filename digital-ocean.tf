@@ -48,7 +48,7 @@ resource "digitalocean_loadbalancer" "public" {
     unhealthy_threshold      = 3
   }
 
-  // droplet_ids = values(digitalocean_droplet.control-plane)[*].id
+  droplet_ids = values(digitalocean_droplet.control-plane)[*].id
 
   provisioner "local-exec" {
     command = "cd talos-config; talosctl gen config talos-k8s-digital-ocean-tutorial https://${self.ip}:443"
@@ -70,7 +70,6 @@ resource "digitalocean_droplet" "control-plane" {
     "talos-control-plane-3"
   ])
   name       = each.key
-  depends_on = [digitalocean_loadbalancer.public]
   region     = "sfo3"
   image      = digitalocean_custom_image.talos.id
   size       = "s-2vcpu-4gb"
@@ -81,7 +80,6 @@ resource "digitalocean_droplet" "control-plane" {
 }
 
 resource "digitalocean_droplet" "worker" {
-  depends_on = [digitalocean_loadbalancer.public]
   name       = "talos-worker-node-1"
   region     = "sfo3"
   image      = digitalocean_custom_image.talos.id
