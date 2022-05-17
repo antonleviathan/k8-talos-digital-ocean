@@ -82,7 +82,7 @@ resource "digitalocean_droplet" "control-plane" {
   ssh_keys  = ["c7:28:d5:da:ca:75:0a:06:f7:69:21:4d:56:6e:17:a7"]
 
   provisioner "local-exec" {
-    command = "./init-cluster.sh ${digitalocean_droplet.control-plane["talos-control-plane-1"].id} ${digitalocean_droplet.control-plane["talos-control-plane-1"].name}"
+    command = "./init-cluster.sh ${digitalocean_droplet.control-plane["talos-control-plane-1"].ipv4_address} ${digitalocean_droplet.control-plane["talos-control-plane-1"].name}"
   }
 }
 
