@@ -1,14 +1,14 @@
 #!/bin/bash
-echo $1;
-echo $2;
+echo "$1";
+echo "$2";
 
 cd talos-config;
 pwd;
 
 dropletIP=`doctl compute droplet get --format PublicIPv4 $1 | cut -d ' ' -f3`;
-echo $dropletIP;
+echo "$dropletIP";
 
-if [ $2 = "talos-control-plane-1" ]; then
+if [ $2 = "talos-control-plane-3" ]; then
   for arg
   do
     talosctl --talosconfig talosconfig config endpoint $dropletIP;
