@@ -7,3 +7,4 @@ cd talos-config;
 talosctl --talosconfig talosconfig config endpoint $1;
 talosctl --talosconfig talosconfig config node $1;
 talosctl --talosconfig talosconfig bootstrap;
+talosctl --talosconfig talosconfig kubeconfig .;
