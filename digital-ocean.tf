@@ -13,10 +13,6 @@ provider "digitalocean" {
   token = var.do_token
 }
 
-locals {
-  region = "sfo3"
-}
-
 resource "digitalocean_custom_image" "talos" {
   name    = "talos"
   url     = "https://github.com/antonleviathan/talos-image/raw/3879e5d8bfaaa1a8368f21b06abd1db64a8d2aa6/disk.raw"
@@ -25,13 +21,13 @@ resource "digitalocean_custom_image" "talos" {
 
 resource "digitalocean_vpc" "default" {
   name     = "deafult-sfo3"
-  region   = locals.region
+  region   = "sfo3"
   ip_range = "10.10.10.0/24"
 }
 
 resource "digitalocean_loadbalancer" "public" {
-  name     = "default-loadbalancer"
-  region   = locals.region
+  name     = "loadbalancer-1"
+  region   = "sfo3"
   vpc_uuid = digitalocean_vpc.default.id
 
   forwarding_rule {
@@ -73,7 +69,7 @@ resource "digitalocean_droplet" "control-plane" {
   depends_on = [digitalocean_loadbalancer.public]
   count      = 3
   name       = "talos-control-plane-${count.index}"
-  region     = locals.region
+  region     = "sfo3"
   image      = digitalocean_custom_image.talos.id
   size       = "s-2vcpu-4gb"
   vpc_uuid   = digitalocean_vpc.default.id
@@ -86,7 +82,7 @@ resource "digitalocean_droplet" "worker" {
   // Depends on LB as it generates the configs used as `user_data`
   depends_on = [digitalocean_loadbalancer.public, digitalocean_droplet.control-plane]
   name       = "talos-worker-node-1"
-  region     = locals.region
+  region     = "sfo3"
   image      = digitalocean_custom_image.talos.id
   size       = "s-2vcpu-4gb"
   vpc_uuid   = digitalocean_vpc.default.id
