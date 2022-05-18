@@ -1,2 +1,2 @@
 terraform.tfvars
-talos-config/*
+talos-config/**
