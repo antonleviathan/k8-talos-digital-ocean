@@ -19,16 +19,16 @@ resource "digitalocean_custom_image" "talos" {
   regions = ["sfo3"]
 }
 
-resource "digitalocean_vpc" "default" {
-  name     = "deafult-sfo3"
-  region   = "sfo3"
-  ip_range = "10.10.10.0/24"
-}
+# resource "digitalocean_vpc" "default" {
+#   name     = "deafult-sfo3"
+#   region   = "sfo3"
+#   ip_range = "10.10.10.0/24"
+# }
 
 resource "digitalocean_loadbalancer" "public" {
   name     = "loadbalancer-1"
   region   = "sfo3"
-  vpc_uuid = digitalocean_vpc.default.id
+  // vpc_uuid = digitalocean_vpc.default.id
 
   forwarding_rule {
     entry_port     = 443
@@ -50,7 +50,7 @@ resource "digitalocean_loadbalancer" "public" {
   droplet_tag = "talos-digital-ocean-tutorial-control-plane"
 
   provisioner "local-exec" {
-    command = "cd talos-config; talosctl gen config talos-k8s-digital-ocean-tutorial https://${self.ip}:443"
+    command = "mkdir talos-config; cd talos-config; talosctl gen config talos-k8s-digital-ocean-tutorial https://${self.ip}:443"
   }
 }
 
@@ -72,7 +72,7 @@ resource "digitalocean_droplet" "control-plane" {
   region     = "sfo3"
   image      = digitalocean_custom_image.talos.id
   size       = "s-2vcpu-4gb"
-  vpc_uuid   = digitalocean_vpc.default.id
+  // vpc_uuid   = digitalocean_vpc.default.id
   tags       = ["talos-digital-ocean-tutorial-control-plane"]
   user_data  = data.local_file.controlplane.content
   ssh_keys   = ["c7:28:d5:da:ca:75:0a:06:f7:69:21:4d:56:6e:17:a7"]
@@ -85,7 +85,7 @@ resource "digitalocean_droplet" "worker" {
   region     = "sfo3"
   image      = digitalocean_custom_image.talos.id
   size       = "s-2vcpu-4gb"
-  vpc_uuid   = digitalocean_vpc.default.id
+  // vpc_uuid   = digitalocean_vpc.default.id
   user_data  = data.local_file.worker.content
   ssh_keys   = ["c7:28:d5:da:ca:75:0a:06:f7:69:21:4d:56:6e:17:a7"]
 }

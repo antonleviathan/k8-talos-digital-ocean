@@ -7,15 +7,12 @@
 do_token=<your_token>
 ```
 2. Deploy the infrastructure using terraform
-3. Run the following commands to config the Talos cluster (make sure you're in the `talos-config` dir):
-  * [docs](https://www.talos.dev/v1.0/talos-guides/install/cloud-platforms/digitalocean/#bootstrap-etcd)
-  * run: `talosctl --talosconfig talosconfig kubeconfig .` inside of talos-config/
-4. Deploy the Digital Ocean Network Controller:
+3. CD into talos-config/
+  * Retrieve kubecofig: `talosctl --talosconfig talosconfig kubeconfig .`
   * Create secret for LB to use: `kubectl --kubeconfig=kubeconfig create secret generic digitalocean --from-literal=access-token=<your_token> -n kube-system`
-  * Deploy: `kubectl --kubeconfig=kubeconfig apply -f digital-ocean-cloud-controller-manager.yaml`
-  * make sure your token starts with `dop_v1_`
-5. Depoy the ingress-nginx:
-  * `kubectl --kubeconfig=kubeconfig apply -f k8-ingress-.yaml`
+      * make sure your token starts with `dop_v1_`
+  * Deploy cloud controller manager: `kubectl --kubeconfig=kubeconfig apply -f ../deployments/digital-ocean-cloud-controller-manager.yaml`
+  * Depoy the ingress-nginx: `kubectl --kubeconfig=kubeconfig apply -f ../deployments/k8-ingress.yaml`
 
 ## TODO
 - [ ] Update talos image source to something more reliable
