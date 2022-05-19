@@ -1,0 +1,5 @@
+[
+  {"op": "add", "path": "/machine/kubelet/extraArgs", "value": {
+    "node-labels": "node.kubernetes.io/exclude-from-external-load-balancers=true"
+  }}
+]

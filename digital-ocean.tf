@@ -19,6 +19,13 @@ resource "digitalocean_custom_image" "talos" {
   regions = ["sfo3"]
 }
 
+resource "digitalocean_ssh_key" "dummy" {
+  # DigitalOcean requires a key when deploying an image even if the machine
+  # will not have SSH access
+  name = "Dummy Talos Key"
+  public_key = file("files/dummy_key.pub")
+}
+
 # resource "digitalocean_vpc" "default" {
 #   name     = "deafult-sfo3"
 #   region   = "sfo3"
@@ -47,10 +54,10 @@ resource "digitalocean_loadbalancer" "public" {
     unhealthy_threshold      = 3
   }
 
-  droplet_tag = "talos-digital-ocean-tutorial-control-plane"
+  droplet_tag = "talos-digital-ocean-control-plane"
 
   provisioner "local-exec" {
-    command = "mkdir talos-config; cd talos-config; talosctl gen config talos-k8s-digital-ocean-tutorial https://${self.ip}:443"
+    command = "mkdir talos-config; cd talos-config; talosctl gen config --config-patch-control-plane=@../files/control-plane-load-balancer-labels.json talos-k8s-digital-ocean https://${self.ip}:443"
   }
 }
 
@@ -73,9 +80,10 @@ resource "digitalocean_droplet" "control-plane" {
   image      = digitalocean_custom_image.talos.id
   size       = "s-2vcpu-4gb"
   // vpc_uuid   = digitalocean_vpc.default.id
-  tags       = ["talos-digital-ocean-tutorial-control-plane"]
+  # required by load balancer for routing purposes
+  tags       = ["talos-digital-ocean-control-plane"]
   user_data  = data.local_file.controlplane.content
-  ssh_keys   = ["c7:28:d5:da:ca:75:0a:06:f7:69:21:4d:56:6e:17:a7"]
+  ssh_keys   = [digitalocean_ssh_key.dummy.fingerprint]
 }
 
 resource "digitalocean_droplet" "worker" {
@@ -87,7 +95,7 @@ resource "digitalocean_droplet" "worker" {
   size       = "s-2vcpu-4gb"
   // vpc_uuid   = digitalocean_vpc.default.id
   user_data  = data.local_file.worker.content
-  ssh_keys   = ["c7:28:d5:da:ca:75:0a:06:f7:69:21:4d:56:6e:17:a7"]
+  ssh_keys   = [digitalocean_ssh_key.dummy.fingerprint]
 }
 
 resource "null_resource" "init-cluster" {
