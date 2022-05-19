@@ -89,6 +89,9 @@ resource "digitalocean_droplet" "worker" {
   ssh_keys   = [digitalocean_ssh_key.dummy.fingerprint]
 }
 
+# TODO(RyanSquared): Commenting this part out until I get Kustomizations built
+# for all the necessary resources
+/*
 resource "null_resource" "init-cluster" {
   depends_on = [digitalocean_droplet.worker]
 
@@ -96,3 +99,4 @@ resource "null_resource" "init-cluster" {
     command = "sh scripts/init-cluster.sh ${digitalocean_droplet.control-plane[0].ipv4_address}"
   }
 }
+*/
