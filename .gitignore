@@ -2,4 +2,5 @@ terraform.tfvars
 talos-config/**
 .terraform.tfstate.lock.info
 terraform.tfstate
+terraform.tfstate.backup
 .terraform
