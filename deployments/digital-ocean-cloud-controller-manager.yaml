@@ -152,4 +152,3 @@ subjects:
 - kind: ServiceAccount
   name: cloud-controller-manager
   namespace: kube-system
-
