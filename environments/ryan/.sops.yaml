@@ -1,0 +1,6 @@
+creation_rules:
+- encrypted_regex: "^(data|stringData)$"
+  # Keys in order:
+  # Ryan
+  pgp: >-
+    88823A75ECAA786B0FF38B148E401478A3FBEF72
