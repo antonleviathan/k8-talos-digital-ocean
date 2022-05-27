@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: external-dns-iam
+type: Opaque
+stringData:
+    AWS_REGION: '...'
+    AWS_ACCESS_KEY_ID: '...'
+    AWS_SECRET_ACCESS_KEY: '...'
